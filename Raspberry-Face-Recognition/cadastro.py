@@ -134,3 +134,4 @@ gpio.cleanup()
 
 print("Training data...")
 os.system("python training.py")
+print("\nTraining done!")
