@@ -40,13 +40,16 @@ while True:
         cv2.rectangle(im, (x-20,y-20), (x+w+20,y+h+20), (0,255,0), 4)
 
         # Recognize the face belongs to which ID
-        Id = recognizer.predict(gray[y:y+h,x:x+w])
+        Id, conf = recognizer.predict(gray[y:y+h,x:x+w])
         
         # Check the ID if exist 
-        if(Id[0] == 1):
-            Id = "Dario"
-        elif(Id[0] == 2):
-            Id = "Fernanda"
+        if(conf < 65):
+	    if(Id == 1):
+                Id = "Dario"
+            elif(Id == 2):
+                Id = "Fernanda"
+	    elif(Id == 3):
+		Id = "Arnoldo"
         else:
             Id = "Unknown"
 	

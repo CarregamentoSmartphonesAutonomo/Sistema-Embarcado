@@ -25,7 +25,7 @@ def remove_smartphone():
     while(True):
         face_id = input('Enter your ID (enter 0 if you want to exit): ')
         if(face_id == 0):
-            sys.exit()
+            return False
         elif(id1 == str(face_id)):
             g = 11
             p = 12
@@ -51,9 +51,9 @@ def remove_smartphone():
             fh3.close()
     	break
 
-    fh = open("memory_"+str(n)+".txt","r")
-    name = fh.readline(3)
-    fh.close()
+#    fh = open("memory_"+str(n)+".txt","r")
+#    name = fh.readline(3)
+#    fh.close()
 
     # Configuring GPIO
     gpio.setmode(gpio.BOARD)
@@ -76,8 +76,9 @@ def remove_smartphone():
     # Set the font style
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    # Recognition flag
+    # Flags
     rec_flag = 0
+    unk_flag = 0
 
     # Initialize and start the video frame capture
     cam = cv2.VideoCapture(0)
@@ -108,7 +109,7 @@ def remove_smartphone():
                     Id = name
                     gpio.output(g, gpio.HIGH) # Open cabin
                     gpio.output(p, gpio.HIGH) # Stop power plug
-                    rec_flag = 1
+                    rec_flag += 1
                     fh = open("memory_"+str(n)+".txt","w")
                     fh.write("0\n")
                     fh.write("0\n")
@@ -121,21 +122,30 @@ def remove_smartphone():
             cv2.rectangle(im, (x-22,y-90), (x+w+22, y-22), (0,255,0), -1)
             cv2.putText(im, str(Id), (x,y-40), font, 2, (255,255,255), 3)
 
+
+        unk_flag += 1
         # Display the video frame with the bounded rectangle
         cv2.imshow('im',im)
 
         # If 'q' is pressed, close program
-        if(rec_flag == 1):
-            break
+        if(rec_flag == 5):
+            # Stop the camera
+            cam.release()
+            # Close all windows
+            cv2.destroyAllWindows()
+            # End operation
+            sleep(5)
+            # Undo GPIO configuration
+            gpio.cleanup()
+            return True
+        if(unk_flag == 200):
+            # Stop the camera
+            cam.release()
+            # Close all windows
+            cv2.destroyAllWindows()
+            # Undo GPIO configuration
+            gpio.cleanup()
+            return False
 
-    # Stop the camera
-    cam.release()
 
-    # Close all windows
-    cv2.destroyAllWindows()
-
-    # End operation
-    input("Press any key to end operation...")
-
-    # Undo GPIO configuration
-    gpio.cleanup()
+    

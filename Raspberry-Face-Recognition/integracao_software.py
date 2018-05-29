@@ -19,15 +19,19 @@ while True:
             if data:
                 print ('go to step "%s"' % data)
 
-                if c == 1:
+                if c == '1':
+                  result = cadastro()
+                  connection.sendall(result)
+                elif c == '2':
+                  result = colocar_na_cabine()
+                  connection.sendall(result)
+                elif c == '3':
                   result = remove_smartphone()
                   connection.sendall(result)
-                elif c == 2:
-                  c.send('Running functionality 2')
                 else:
                   c.close()
             else:
-                print >>sys.stderr, 'no more data from', client_address
+                print 'no more data from', client_address
                 break
 
     finally:
