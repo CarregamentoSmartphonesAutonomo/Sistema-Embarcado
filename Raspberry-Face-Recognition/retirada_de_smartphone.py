@@ -33,7 +33,7 @@ def remove_smartphone():
             fh1 = open("memory_1.txt","r")
             name = fh1.readline(3)
             fh1.close()
-    	break
+    	    break
         elif(id2 == str(face_id)):
             g = 13
             p = 16
@@ -41,7 +41,7 @@ def remove_smartphone():
             fh2 = open("memory_2.txt","r")
             name = fh2.readline(3)
             fh2.close()
-    	break
+    	    break
         elif(id3 == str(face_id)):
             g = 15
             p = 18
@@ -49,7 +49,7 @@ def remove_smartphone():
             fh3 = open("memory_3.txt","r")
             name = fh3.readline(3)
             fh3.close()
-    	break
+    	    break
 
 #    fh = open("memory_"+str(n)+".txt","r")
 #    name = fh.readline(3)

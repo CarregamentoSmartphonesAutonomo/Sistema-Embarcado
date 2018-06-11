@@ -1,6 +1,16 @@
 import socket
-import retirada_de_smartphone
+import bib_rasp.py
 
+# GPIO configuring
+gpio.setmode(gpio.BOARD)
+gpio.setup(11, gpio.OUT)
+gpio.setup(13, gpio.OUT)
+gpio.setup(15, gpio.OUT)
+gpio.setup(12, gpio.OUT)
+gpio.setup(16, gpio.OUT)
+gpio.setup(18, gpio.OUT)
+
+# Socket configuring
 s = socket.socket()
 host = '10.3.141.1' #ip of raspberry pi
 port = 4141
@@ -10,30 +20,54 @@ s.listen(5)
 while True:
   c, addr = s.accept()
 
-   try:
-        print ('Got connection from',addr)
-        # Receive the commands data in small chunks and retransmit the results
-        while True:
-            data = connection.recv(16)
-            print ('received "%s"' % data)
-            if data:
-                print ('go to step "%s"' % data)
+  try:
+    print ('Got connection from',addr)
+    # Receive the commands command in small chunks and retransmit the results
+    while True:
+      command = c.recv(32)
+      command = command.rstrip() #remove last character
+      print ('received', command)
+      if command:
+        print ('go to step', command)
+        if command == '1':
+          result = bib_rasp.checar_cabine()
+          c.sendall(result)
+          # c.sendall(str(result))
+        elif command == '2':
+          face_id = c.recv(32)
+          face_id = face_id.rstrip()
+          result = bib_rasp.obter_fotos(face_id)
+          c.sendall(str(result))
+        elif command == '3':
+          data = c.recv(32)
+          data = face_id.rstrip()
+          name = data[0]
+          face_id = data[1]
+          cab_id = data[2]
+          result = bib_rasp.colocar_na_cabine(name,face_id,cab_id)
+          c.sendall(str(result))
+        elif command == '4':
+          cab_id = c.recv(32)
+          cab_id = face_id.rstrip()
+          result = bib_rasp.confirmar_fechamento(cab_id)
+          c.sendall(str(result))
+        elif command == '5':
+          cab_id = c.recv(32)
+          cab_id = face_id.rstrip()
+          result = bib_rasp.remove_smartphone(cab_id)
+          c.sendall(str(result))
+        elif command == 'f':
+          print('Terminando programa')
+          gpio.cleanup()
+          break
+        else:
+          print('Comando não encontrado')
+          break
+      else:
+        print 'No more command from', client_address
+        break
 
-                if c == '1':
-                  result = cadastro()
-                  connection.sendall(result)
-                elif c == '2':
-                  result = colocar_na_cabine()
-                  connection.sendall(result)
-                elif c == '3':
-                  result = remove_smartphone()
-                  connection.sendall(result)
-                else:
-                  c.close()
-            else:
-                print 'no more data from', client_address
-                break
-
-    finally:
-        # Clean up the connection
-        connection.close()
+  finally:
+    # Clean up the c
+    print('Terminando a comunicação com o app')
+    c.close()
