@@ -1,5 +1,7 @@
 import socket
-import bib_rasp.py
+import bib_rasp
+import RPi.GPIO as gpio
+import sys
 
 # GPIO configuring
 gpio.setmode(gpio.BOARD)
@@ -30,9 +32,10 @@ while True:
       if command:
         print ('go to step', command)
         if command == '1':
-          result = bib_rasp.checar_cabine()
-          c.sendall(result)
-          # c.sendall(str(result))
+          result = "1\n"
+          result = result + bib_rasp.checar_cabines() + "\n"
+          c.sendall(str(result))
+          print 'Result: ', result
         elif command == '2':
           face_id = c.recv(32)
           face_id = face_id.rstrip()
@@ -54,20 +57,21 @@ while True:
         elif command == '5':
           cab_id = c.recv(32)
           cab_id = face_id.rstrip()
-          result = bib_rasp.remove_smartphone(cab_id)
+          result = bib_rasp.remover_smartphone(cab_id)
           c.sendall(str(result))
         elif command == 'f':
           print('Terminando programa')
           gpio.cleanup()
-          break
+          sys.exit()
         else:
-          print('Comando não encontrado')
+          print('Comando nao encontrado')
           break
       else:
-        print 'No more command from', client_address
+        print 'no more command from', addr
+        gpio.cleanup()
         break
 
   finally:
     # Clean up the c
-    print('Terminando a comunicação com o app')
+    print('Terminando a comunicacao com o app')
     c.close()

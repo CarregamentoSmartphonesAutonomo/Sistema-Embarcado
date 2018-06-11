@@ -6,23 +6,27 @@ import time
 import os
 
 def checar_cabines():
-    cabine = []
+    cabine = ""
     # Check if there are cabins available
     fh1 = open("memory_1.txt","r+")
     fh2 = open("memory_2.txt","r+")
     fh3 = open("memory_3.txt","r+")
     op1 = fh1.readline(2)
+    op1 = op1.rstrip()
     op2 = fh2.readline(2)
+    op2 = op1.rstrip()
     op3 = fh3.readline(2)
+    op3 = op1.rstrip()
     fh1.close()
     fh2.close()
     fh3.close()
     if(op1 == '0'):
-        cabine.append(1)
+        cabine = cabine+"1"
     if(op2 == '0'):
-        cabine.append(2)
+        cabine = cabine+"2"
     if(op3 == '0'):
-        cabine.append(3)
+        cabine = cabine+"3"
+    print "Cabine:", cabine
     return cabine
 
 def obter_fotos(face_id):
@@ -64,7 +68,7 @@ def obter_fotos(face_id):
             cv2.imwrite("dataset/User." + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
 
             # Display the video frame, with bounded rectangle on the person's face
-            cv2.imshow('frame', image_frame)
+            #cv2.imshow('frame', image_frame)
 
         # If image taken reach 100, stop taking video
         if count>100:
@@ -123,10 +127,10 @@ def confirmar_fechamento(cab_id):
         gpio.output(13, gpio.HIGH)
     if(cab_id == 3):
         gpio.output(15, gpio.HIGH)
-    else
+    else:
         return True
 
-def remove_smartphone(cab_id):
+def remover_smartphone(cab_id):
 
     if(cab_id == '1'):
         g = 11
@@ -135,7 +139,6 @@ def remove_smartphone(cab_id):
         fh1 = open("memory_1.txt","r")
         name = fh1.readline(3)
         fh1.close()
-        break
     elif(cab_id == '2'):
         g = 13
         p = 16
@@ -143,7 +146,6 @@ def remove_smartphone(cab_id):
         fh2 = open("memory_2.txt","r")
         name = fh2.readline(3)
         fh2.close()
-        break
     elif(cab_id == '3'):
         g = 15
         p = 18
@@ -151,7 +153,6 @@ def remove_smartphone(cab_id):
         fh3 = open("memory_3.txt","r")
         name = fh3.readline(3)
         fh3.close()
-        break
     else:
         return False
 
