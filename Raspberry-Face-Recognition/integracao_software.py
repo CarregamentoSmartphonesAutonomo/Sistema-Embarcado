@@ -4,6 +4,7 @@ import RPi.GPIO as gpio
 import sys
 
 # GPIO configuring
+gpio.setwarnings(False)
 gpio.setmode(gpio.BOARD)
 gpio.setup(11, gpio.OUT)
 gpio.setup(13, gpio.OUT)
@@ -18,15 +19,15 @@ host = '10.3.141.1' #ip of raspberry pi
 port = 4141
 s.bind((host, port))
 
-s.listen(5)
+s.listen(1)
 while True:
   c, addr = s.accept()
-
   try:
     print ('Got connection from',addr)
     # Receive the commands command in small chunks and retransmit the results
     while True:
       command = c.recv(32)
+      print(command)
       command = command.rstrip() #remove last character
       print ('received', command)
       if command:
@@ -35,30 +36,36 @@ while True:
           result = "1\n"
           result = result + bib_rasp.checar_cabines() + "\n"
           c.sendall(str(result))
-          print 'Result: ', result
+          continue
         elif command == '2':
-          face_id = c.recv(32)
-          face_id = face_id.rstrip()
-          result = bib_rasp.obter_fotos(face_id)
+          #face_id = c.recv(32)
+          #face_id = face_id.rstrip()
+          #result = bib_rasp.obter_fotos(face_id)
+          result = "2\nasd\n"
           c.sendall(str(result))
+          continue
         elif command == '3':
-          data = c.recv(32)
-          data = face_id.rstrip()
-          name = data[0]
-          face_id = data[1]
-          cab_id = data[2]
-          result = bib_rasp.colocar_na_cabine(name,face_id,cab_id)
+          #data = c.recv(32)
+          #data = face_id.rstrip()
+          #name = data[0]
+          #face_id = data[1]
+          #cab_id = data[2]
+          #result = bib_rasp.colocar_na_cabine(name,face_id,cab_id)
+          result = "3\nfre\n"
           c.sendall(str(result))
+          continue
         elif command == '4':
           cab_id = c.recv(32)
           cab_id = face_id.rstrip()
           result = bib_rasp.confirmar_fechamento(cab_id)
           c.sendall(str(result))
+          continue
         elif command == '5':
           cab_id = c.recv(32)
           cab_id = face_id.rstrip()
           result = bib_rasp.remover_smartphone(cab_id)
           c.sendall(str(result))
+          continue
         elif command == 'f':
           print('Terminando programa')
           gpio.cleanup()
