@@ -38,6 +38,7 @@ def getImagesAndLabels(path):
 
         # Get the image id
         id = int(os.path.split(imagePath)[-1].split(".")[1])
+        print(id)
         
         # Get the face from the training images
         faces = detector.detectMultiScale(img_numpy)
@@ -56,7 +57,7 @@ def getImagesAndLabels(path):
 
 # Get the faces and IDs
 faces,ids = getImagesAndLabels('dataset')
-
+print(ids)
 # Train the model using the faces and IDs
 recognizer.train(faces, np.array(ids))
 

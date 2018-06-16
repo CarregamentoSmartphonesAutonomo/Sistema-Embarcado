@@ -26,9 +26,11 @@ while True:
     print ('Got connection from',addr)
     # Receive the commands command in small chunks and retransmit the results
     while True:
-      command = c.recv(32)
-      print(command)
-      command = command.rstrip() #remove last character
+      received = c.recv(32)
+      received = received.rstrip() #remove last character
+      command, data = received.split("|")
+      print("Comando: "+command+"\n")
+      print("Dados: "+data)+"\n"
       print ('received', command)
       if command:
         print ('go to step', command)
@@ -38,32 +40,27 @@ while True:
           c.sendall(str(result))
           continue
         elif command == '2':
-          #face_id = c.recv(32)
-          #face_id = face_id.rstrip()
-          #result = bib_rasp.obter_fotos(face_id)
-          result = "2\nasd\n"
+          face_id = data
+          result = bib_rasp.obter_fotos(face_id)
+          result = "2\n"+str(result)+"\n"
           c.sendall(str(result))
           continue
         elif command == '3':
-          #data = c.recv(32)
-          #data = face_id.rstrip()
-          #name = data[0]
-          #face_id = data[1]
-          #cab_id = data[2]
-          #result = bib_rasp.colocar_na_cabine(name,face_id,cab_id)
-          result = "3\nfre\n"
+          name, face_id, cab_id = data.split(",")
+          result = bib_rasp.colocar_na_cabine(name,face_id,cab_id)
+          result = "3\n"+str(result)+"\n"
           c.sendall(str(result))
           continue
         elif command == '4':
-          cab_id = c.recv(32)
-          cab_id = face_id.rstrip()
+          #cab_id = data
           result = bib_rasp.confirmar_fechamento(cab_id)
+          result = "4\n"+str(result)+"\n"
           c.sendall(str(result))
           continue
         elif command == '5':
-          cab_id = c.recv(32)
-          cab_id = face_id.rstrip()
+          cab_id = data
           result = bib_rasp.remover_smartphone(cab_id)
+          result = "5\n"+str(result)+"\n"
           c.sendall(str(result))
           continue
         elif command == 'f':
