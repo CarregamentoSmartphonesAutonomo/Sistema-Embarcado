@@ -125,7 +125,7 @@ def colocar_na_cabine(name,face_id,cab_id):
 
 def confirmar_fechamento(cab_id):
     if(cab_id == '1'):
-        gpio.output(11, gpio.HIGH)
+        gpio.output(11, gpio.HIGH) # fechar cabine
         return True
     elif(cab_id == '2'):
         gpio.output(13, gpio.HIGH)
@@ -143,31 +143,26 @@ def remover_smartphone(cab_id):
         p = 12
         n = 1
         fh1 = open("memory_1.txt","r")
-        face_id = fh1.readline(1)
-        name = fh1.readline(3)
+        text = fh1.read()
         fh1.close()
     elif(cab_id == '2'):
         g = 13
         p = 16
         n = 2
         fh2 = open("memory_2.txt","r")
-        face_id = fh2.readline(1)
-        name = fh2.readline(3)
+        text = fh2.read()
         fh2.close()
     elif(cab_id == '3'):
         g = 15
         p = 18
         n = 3
         fh3 = open("memory_3.txt","r")
-        face_id = fh3.readline(1)
-        name = fh3.readline(3)
+        text = fh3.read()
         fh3.close()
     else:
         return False
 
-    print(name)
-    print(face_id)
-    print(int(face_id))
+    face_id, cab, name,_ = text.split("\n")
 
     # Create Local Binary Patterns Histograms for face recognization
     recognizer = cv2.face.createLBPHFaceRecognizer()
@@ -216,8 +211,8 @@ def remover_smartphone(cab_id):
             if(conf < 60):
                 if(Id == int(face_id)):
                     print "Bem vindo de volta", name
-                    gpio.output(g, gpio.LOW) # Open cabin
-                    gpio.output(p, gpio.HIGH) # Stop power plug
+                    gpio.output(g, gpio.LOW) # abrir cabine
+                    gpio.output(p, gpio.HIGH) # desativar pomada
                     #rec_flag += 1
                     fh = open("memory_"+str(n)+".txt","w")
                     fh.write("0\n")
