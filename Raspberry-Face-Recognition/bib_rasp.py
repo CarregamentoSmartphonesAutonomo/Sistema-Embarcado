@@ -27,72 +27,74 @@ def checar_cabines():
         cabine = cabine+"2"
     if(op3 == '0'):
         cabine = cabine+"3"
-    print "Cabine:", cabine
     return cabine
 
 def obter_fotos(face_id):
+    try:
+        # Start capturing video 
+        vid_cam = cv2.VideoCapture(0)
 
-    # Start capturing video 
-    vid_cam = cv2.VideoCapture(0)
+        # Detect object in video stream using Haarcascade Frontal Face
+        face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
-    # Detect object in video stream using Haarcascade Frontal Face
-    face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        # Initialize sample face image
+        count = 0
 
-    # Initialize sample face image
-    count = 0
+        # Cabin flag
+        cab_flag = 0
 
-    # Cabin flag
-    cab_flag = 0
+        # Start looping
+        while(True):
 
-    # Start looping
-    while(True):
+            # Capture video frame
+            _, image_frame = vid_cam.read()
 
-        # Capture video frame
-        _, image_frame = vid_cam.read()
+            # Convert frame to grayscale
+            gray = cv2.cvtColor(image_frame, cv2.COLOR_BGR2GRAY)
 
-        # Convert frame to grayscale
-        gray = cv2.cvtColor(image_frame, cv2.COLOR_BGR2GRAY)
+            # Detect frames of different sizes, list of faces rectangles
+            faces = face_detector.detectMultiScale(gray, 1.3, 5)
 
-        # Detect frames of different sizes, list of faces rectangles
-        faces = face_detector.detectMultiScale(gray, 1.3, 5)
+            # Loops for each faces
+            for (x,y,w,h) in faces:
 
-        # Loops for each faces
-        for (x,y,w,h) in faces:
+                # Crop the image frame into rectangle
+                cv2.rectangle(image_frame, (x,y), (x+w,y+h), (255,0,0), 2)
+                
+                # Increment sample face image
+                count += 1
 
-            # Crop the image frame into rectangle
-            cv2.rectangle(image_frame, (x,y), (x+w,y+h), (255,0,0), 2)
-            
-            # Increment sample face image
-            count += 1
+                # Save the captured image into the datasets folder
+                cv2.imwrite("dataset/User." + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
 
-            # Save the captured image into the datasets folder
-            cv2.imwrite("dataset/User." + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
+                # Display the video frame, with bounded rectangle on the person's face
+                #cv2.imshow('frame', image_frame)
 
-            # Display the video frame, with bounded rectangle on the person's face
-            #cv2.imshow('frame', image_frame)
+            # If image taken reach 100, stop taking video
+            if count>100:
+                break
 
-        # If image taken reach 100, stop taking video
-        if count>100:
-            break
+        # Stop video
+        vid_cam.release()
 
-    # Stop video
-    vid_cam.release()
+        # Close all started windows
+        cv2.destroyAllWindows()
 
-    # Close all started windows
-    cv2.destroyAllWindows()
+        print("Training data...")
+        os.system("python training.py")
+        print("\nTraining done!")
 
-    print("Training data...")
-    os.system("python training.py")
-    print("\nTraining done!")
+        return True
 
-    return True
+    except:
+        return False
 
 def colocar_na_cabine(name,face_id,cab_id):
     print(name)
     print(face_id)
     print(cab_id)
     if(cab_id == '1'):
-        gpio.output(12, gpio.LOW) # ativar tomada
+        gpio.output(18, gpio.LOW) # ativar tomada
         fh1 = open("memory_1.txt","w")
         fh1.write(face_id+"\n")
         fh1.write("1\n")
@@ -111,7 +113,7 @@ def colocar_na_cabine(name,face_id,cab_id):
         cab_flag = 1
         return True
     elif(cab_id == '3'):
-        gpio.output(18, gpio.LOW)
+        gpio.output(12, gpio.LOW)
         fh3 = open("memory_3.txt","w")
         fh3.write(face_id+"\n")
         fh3.write("1\n")
@@ -140,7 +142,7 @@ def remover_smartphone(cab_id):
 
     if(cab_id == '1'):
         g = 11
-        p = 12
+        p = 18
         n = 1
         fh1 = open("memory_1.txt","r")
         text = fh1.read()
@@ -154,7 +156,7 @@ def remover_smartphone(cab_id):
         fh2.close()
     elif(cab_id == '3'):
         g = 15
-        p = 18
+        p = 12
         n = 3
         fh3 = open("memory_3.txt","r")
         text = fh3.read()
