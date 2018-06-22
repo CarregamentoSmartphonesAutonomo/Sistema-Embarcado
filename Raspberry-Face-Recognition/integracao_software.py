@@ -68,9 +68,10 @@ def connection():
             c.sendall(str(result))
             continue
           elif command == '4':
-            #cab_id = data
+            cab_id = data
             result = bib_rasp.confirmar_fechamento(cab_id)
             result = "4\n"+str(result)+"\n"
+            print result
             c.sendall(str(result))
             continue
           elif command == '5':
@@ -80,20 +81,26 @@ def connection():
             c.sendall(str(result))
             continue
           elif command == '6':
-            result = bib_rasp.confirmar_fechamento(cab_id)
+            cab_id = data
+            result = bib_rasp.destravar_cabine(cab_id)
             result = "6\n"+str(result)+"\n"
             c.sendall(str(result))
+            continue          
+          elif command == '7':
+            cab_id = data
+            result = bib_rasp.confirmar_fechamento(cab_id)
+            result = "7\n"+str(result)+"\n"
+            c.sendall(str(result))
             continue
-          elif command == 'f':
-            print('Terminando programa')
-            gpio.cleanup()
-            sys.exit()
-          else:
-            print('Comando nao encontrado')
+          elif strcomp(command,'FIN') == 0 or strcomp(command,'null') == 0:
+            print('Terminando conexao')
             c.close()
             s.close()
             time.sleep(1)
             connection()
+          else:
+            print('Comando nao encontrado')
+            continue
         else:
           print 'no more command from', addr
           gpio.cleanup()

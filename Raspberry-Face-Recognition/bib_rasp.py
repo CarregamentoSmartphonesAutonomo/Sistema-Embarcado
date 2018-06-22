@@ -12,21 +12,28 @@ def checar_cabines():
     fh1 = open("memory_1.txt","r+")
     fh2 = open("memory_2.txt","r+")
     fh3 = open("memory_3.txt","r+")
-    op1 = fh1.readline(2)
+    op1 = fh1.readline()
+    op1 = fh1.readline()
     op1 = op1.rstrip()
-    op2 = fh2.readline(2)
-    op2 = op1.rstrip()
-    op3 = fh3.readline(2)
-    op3 = op1.rstrip()
+    print op1
+    op2 = fh2.readline()
+    op2 = fh2.readline()
+    op2 = op2.rstrip()
+    print op2
+    op3 = fh3.readline()
+    op3 = fh3.readline()
+    op3 = op3.rstrip()
+    print op3
     fh1.close()
     fh2.close()
     fh3.close()
     if(op1 == '0'):
-        cabine = cabine+"1"
+        cabine = cabine+"1,"
     if(op2 == '0'):
-        cabine = cabine+"2"
+        cabine = cabine+"2,"
     if(op3 == '0'):
         cabine = cabine+"3"
+    print "Cabines disponiveis: ", cabine
     return cabine
 
 def obter_fotos(face_id):
@@ -213,14 +220,6 @@ def remover_smartphone(cab_id):
             if(conf < 60):
                 if(Id == int(face_id)):
                     print "Bem vindo de volta", name
-                    gpio.output(g, gpio.LOW) # abrir cabine
-                    gpio.output(p, gpio.HIGH) # desativar pomada
-                    #rec_flag += 1
-                    fh = open("memory_"+str(n)+".txt","w")
-                    fh.write("0\n")
-                    fh.write("0\n")
-                    fh.write("0")
-                    fh.close()
                     # Stop the camera
                     cam.release()
                     # Close all windows
@@ -248,3 +247,48 @@ def remover_smartphone(cab_id):
             # Close all windows
             cv2.destroyAllWindows()
             return False
+
+def destravar_cabine(cab_id):
+
+    if(cab_id == '1'):
+        g = 11
+        p = 18
+        n = 1
+        gpio.output(g, gpio.LOW) # abrir cabine
+        gpio.output(p, gpio.HIGH) # desativar pomada
+        #rec_flag += 1
+        fh = open("memory_"+str(n)+".txt","w")
+        fh.write("0\n")
+        fh.write("0\n")
+        fh.write("0")
+        fh.close()
+        return True
+    elif(cab_id == '2'):
+        g = 13
+        p = 16
+        n = 2
+        gpio.output(g, gpio.LOW) # abrir cabine
+        gpio.output(p, gpio.HIGH) # desativar pomada
+        #rec_flag += 1
+        fh = open("memory_"+str(n)+".txt","w")
+        fh.write("0\n")
+        fh.write("0\n")
+        fh.write("0")
+        fh.close()
+        return True
+    elif(cab_id == '3'):
+        g = 15
+        p = 12
+        n = 3
+        gpio.output(g, gpio.LOW) # abrir cabine
+        gpio.output(p, gpio.HIGH) # desativar pomada
+        #rec_flag += 1
+        fh = open("memory_"+str(n)+".txt","w")
+        fh.write("0\n")
+        fh.write("0\n")
+        fh.write("0\n")
+        fh.close()
+        return True
+    else:
+        return False
+
